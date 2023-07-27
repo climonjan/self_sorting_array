@@ -1,8 +1,48 @@
-#include "MyLibrary.h"
+#ifndef ARRAY_H_
+#define ARRAY_H_
+#include <iostream>
 
-using namespace MyNamespace;
+template<typename T>
+class My_List
+{
+public:
+	My_List();
+	~My_List();
 
-//конструктор класса
+	T& operator[](const int index);
+
+	const int GetSize() { return SIZE; }
+	void Pop_Front();
+	void Pop_Back();
+	void Clear();
+	void PrintElement(int index);
+	void PrintList();
+	void Insert(T value);
+	void RemoveAt(int index);
+	int Find(T value);
+
+private:
+	template<typename T>
+	class Node
+	{
+	public:
+		Node* pNext;
+		T data;
+
+		Node(T data = T(), Node* pNext = nullptr)
+		{
+			this->data = data;
+			this->pNext = pNext;
+		}
+	};
+
+	Node<T>* head;
+	static int SIZE;
+};
+
+template<typename T>
+int My_List<T>::SIZE = 0;
+
 template<typename T>
 My_List<T>::My_List()
 {
@@ -10,14 +50,12 @@ My_List<T>::My_List()
 	head = nullptr;
 }
 
-//деструктор класса
 template<typename T>
 My_List<T>::~My_List()
 {
 	Clear();
 }
 
-//перегрузка оператора квадратных скобок
 template<typename T>
 T& My_List<T>::operator[](const int index)
 {
@@ -27,16 +65,13 @@ T& My_List<T>::operator[](const int index)
 	while (current != nullptr)
 	{
 		if (counter == index)
-		{
 			return current->data;
-		}
 
 		current = current->pNext;
 		counter++;
 	}
 }
 
-//метод удаляет эл-т в начале списка
 template<typename T>
 void My_List<T>::Pop_Front()
 {
@@ -44,21 +79,16 @@ void My_List<T>::Pop_Front()
 	head = head->pNext;
 
 	delete temp;
-
 	SIZE--;
 }
 
-//метод очищает список
 template<typename T>
 void My_List<T>::Clear()
 {
 	while (SIZE)
-	{
 		Pop_Front();
-	}
 }
 
-//метод добавляет эл-т списка с определенным индексом
 template<typename T>
 void My_List<T>::Insert(T value)
 {
@@ -66,14 +96,12 @@ void My_List<T>::Insert(T value)
 	Node<T>* prev = nullptr;
 	Node<T>* newNode = new Node<T>(value);
 
-	// найдем место для вставки нового элемента в отсортированном списке
 	while (current != nullptr && value > current->data)
 	{
 		prev = current;
 		current = current->pNext;
 	}
 
-	// если новый элемент добавляется в начало списка
 	if (prev == nullptr)
 	{
 		newNode->pNext = head;
@@ -88,14 +116,11 @@ void My_List<T>::Insert(T value)
 	SIZE++;
 }
 
-//метод удаляет эл-т списка с определенным индексом
 template<typename T>
 void My_List<T>::RemoveAt(int index)
 {
 	if ((index >= SIZE) || index < 0)
-	{
-		throw exception("Нет эл-та с таким индексом!\n");
-	}
+		throw std::exception("Нет эл-та с таким индексом!\n");
 
 	if (index == 0)
 	{
@@ -106,80 +131,63 @@ void My_List<T>::RemoveAt(int index)
 		Node<T>* previous = this->head;
 
 		for (int i = 0; i < index - 1; i++)
-		{
 			previous = previous->pNext;
-		}
 
 		Node<T>* toDelete = previous->pNext;
 		previous->pNext = toDelete->pNext;
 
 		delete toDelete;
-
 		SIZE--;
 	}
 }
 
-//метод удаляет эл-т в конце списка
 template<typename T>
 void My_List<T>::Pop_Back()
 {
 	RemoveAt(SIZE - 1);
 }
 
-//метод выводит эл-т списка с определенным индексом
 template<typename T>
 void My_List<T>::PrintElement(int index)
 {
 	if (SIZE == 0)
-	{
-		throw exception("Список пуст!\n");
-	}
+		throw std::exception("Список пуст!\n");
 
 	if ((index >= SIZE) || index < 0)
-	{
-		throw exception("Такого эл-та в списке нет!\n");
-	}
+		throw std::exception("Такого эл-та в списке нет!\n");
 
 	Node<T>* current = head;
 
 	for (int i = 0; i < index; i++)
-	{
 		current = current->pNext;
-	}
 
-	cout << current->data << endl;
+	std::cout << current->data << std::endl;
 }
 
-//метод выводит весь список на экран
 template<typename T>
 void My_List<T>::PrintList()
 {
 	if (SIZE == 0)
-	{
-		throw exception("Список пуст!\n");
-	}
+		throw std::exception("Список пуст!\n");
 
-	cout << "Список эл-тов:\n";
+	std::cout << "Список эл-тов:\n";
 
 	Node<T>* current = head;
 
 	while (current != nullptr)
 	{
-		cout << current->data << " ";
+		std::cout << current->data << " ";
 		current = current->pNext;
 	}
 
-	cout << endl;
+	std::cout << std::endl;
 }
 
-//метод возвращает индекс первого найденного эл-та с переданным значением
 template<typename T>
 int My_List<T>::Find(T value)
 {
 	if (SIZE == 0)
-	{
-		throw exception("Список пуст!\n");
-	}
+		throw std::exception("Список пуст!\n");
 
 	int index = 0;
 	Node<T>* current = head;
@@ -187,13 +195,13 @@ int My_List<T>::Find(T value)
 	while (current != nullptr)
 	{
 		if (current->data == value)
-		{
 			return index;
-		}
 
 		current = current->pNext;
 		index++;
 	}
 
-	throw exception("Такого эл-та нет!\n");
+	throw std::exception("Такого эл-та нет!\n");
 }
+
+#endif // ARRAY_H_

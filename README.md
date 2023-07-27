@@ -1,0 +1,1 @@
+self-sorted array.
